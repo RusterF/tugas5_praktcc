@@ -4,24 +4,24 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-
 app.use(cors());
 
-// ✅ Create MySQL Connection
+// ✅ Create MySQL Connection with Cloud SQL Public IP
 const db = mysql.createConnection({
-    host: "34.142.236.208",
+    host: "34.142.236.208",  // 🔹 Your Cloud SQL instance IP
     user: "root",
-    password: "",
+    password: "YOUR_MYSQL_PASSWORD", // 🔹 Update with your actual password
     database: "notes_db",
+    connectTimeout: 20000 // ✅ Prevents timeout issues
 });
 
 // ✅ Handle MySQL Connection Errors
 db.connect(err => {
     if (err) {
-        console.error("Database connection failed:", err);
+        console.error("❌ Database connection failed:", err);
         process.exit(1); // Exit if database connection fails
     } else {
-        console.log("✅ Connected to MySQL Database");
+        console.log("✅ Connected to Cloud SQL!");
     }
 });
 
@@ -65,6 +65,6 @@ app.delete("/notes/:id", (req, res) => {
     });
 });
 
-// ✅ Start the server
+// ✅ Start the server (Allow External Access)
 const PORT = 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+app.listen(PORT, "0.0.0.0", () => console.log(`🚀 Server running on http://0.0.0.0:${PORT}`));
